@@ -45,10 +45,13 @@ namespace webviewer_winforms_net462
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string pdfPath = openFileDialog.FileName;
-                    string pdfUrl = new Uri(pdfPath).AbsoluteUri;
-                    string filePath = openFileDialog.FileName.Replace("\\", "/");
-                    string script = $"window.webViewerInstance.UI.loadDocument('file://{filePath}');";
+                    var filePath = openFileDialog.FileName;
+
+                    // example file extension override
+                    var extOverrideExample = Path.GetExtension(filePath) == ".ppsx" ? ", { extension: 'pptx' }" : "";
+
+                    var filePathSlashes = filePath.Replace("\\", "/");
+                    var script = $"window.webViewerInstance.UI.loadDocument('file://{filePathSlashes}'{extOverrideExample});";
                     await webView2.CoreWebView2.ExecuteScriptAsync(script);
                 }
             }

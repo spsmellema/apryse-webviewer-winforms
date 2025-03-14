@@ -1,13 +1,6 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace webviewer_winforms_net462
@@ -19,6 +12,14 @@ namespace webviewer_winforms_net462
             InitializeComponent();
 
             Load += Form1_Load;
+
+            MenuStrip menuStrip = new MenuStrip();
+            ToolStripMenuItem fileMenu = new ToolStripMenuItem("File");
+            ToolStripMenuItem openItem = new ToolStripMenuItem("Open...", null, OnOpenClick);
+            fileMenu.DropDownItems.Add(openItem);
+            menuStrip.Items.Add(fileMenu);
+            this.MainMenuStrip = menuStrip;
+            this.Controls.Add(menuStrip);
         }
 
         private async void Form1_Load(object sender, EventArgs e)
@@ -31,6 +32,26 @@ namespace webviewer_winforms_net462
 
             UriBuilder uriBuilder = new UriBuilder(Path.Combine(Directory.GetCurrentDirectory(), "webviewer/index.html"));
             webView2.Source = uriBuilder.Uri;
+        }
+
+        private async void OnOpenClick(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Title = "Open a File";
+                openFileDialog.Filter = "All Files (*.*)|*.*|PDF Files (*.pdf)|*.pdf|DOCX Files (*.docx)|*.docx|PowerPoint Files (*.pptx)|*.pptx";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string pdfPath = openFileDialog.FileName;
+                    string pdfUrl = new Uri(pdfPath).AbsoluteUri;
+                    string filePath = openFileDialog.FileName.Replace("\\", "/");
+                    string script = $"window.webViewerInstance.UI.loadDocument('file://{filePath}');";
+                    await webView2.CoreWebView2.ExecuteScriptAsync(script);
+                }
+            }
         }
     }
 }

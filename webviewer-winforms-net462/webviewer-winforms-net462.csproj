@@ -104,6 +104,6 @@
     <Error Condition="!Exists('packages\Microsoft.Web.WebView2.1.0.3124.44\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Web.WebView2.1.0.3124.44\build\Microsoft.Web.WebView2.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /E /I /H "$(ProjectDir)webviewer" "$(ProjectDir)$(OutDir)webviewer\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /E /I /H /Y /C "$(ProjectDir)webviewer" "$(ProjectDir)$(OutDir)webviewer\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
